@@ -1,1 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mobile Tubio Local</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; text-align: center; background: #121212; color: white; }
+        input, button { width: 90%; padding: 12px; margin: 10px 0; border-radius: 8px; border: none; font-size: 16px; }
+        input { background: #222; color: white; }
+        button { background: #007bff; color: white; font-weight: bold; }
+    </style>
+</head>
+<body>
 
+    <h1>Mobile DLNA Caster</h1>
+    <p>Run locally from your phone storage</p>
+
+    <input type="text" id="videoUrl" placeholder="Paste direct video URL (mp4/mkv)">
+    <button id="castBtn">Cast to TV</button>
+
+    <script>
+        let presentationRequest = null;
+        let presentationConnection = null;
+
+        document.getElementById('castBtn').addEventListener('click', () => {
+            const url = document.getElementById('videoUrl').value;
+            if (!url) return alert('Please paste a video URL first!');
+
+            // We use a dummy presentation page or the video URL itself if the TV supports it
+            // The Presentation API forces Chrome to open its native Cast/DLNA device picker
+            presentationRequest = new PresentationRequest([url]);
+
+            presentationRequest.start()
+                .then(connection => {
+                    presentationConnection = connection;
+                    alert('Connected to TV! Video should be playing.');
+                })
+                .catch(error => {
+                    console.error('Casting failed', error);
+                    alert('Could not connect: ' + error.message);
+                });
+        });
+    </script>
+</body>
+</html>
